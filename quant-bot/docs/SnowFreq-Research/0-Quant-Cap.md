@@ -35,102 +35,9 @@
 
 # Methodology
 
-## How our OVR Quant Engineer signals control to Trade agents
+## Quant Analsis Framework for SnowFreq Portfolio (ChatGPT + Investopedia + DataCamp articles)
 
-Our Quant analyses or TradeBot performance to control OVR capital
-
-> Quant Engineer signals control Trade agents
-
-
-- Freqtrade default App Cycle
-
-    A[OHCLV Data] --> B[Freqtrade modules mutate OHLCV]
-    B --> C[Trade performance Output: Server Logs(Live) & Module Output(BT) ]
-
-<!-- Flowchart md syntax
-```mermaid
-graph LR
-    A[OHCLV Data] -> B[Freqtrade modules mutate OHLCV]
-    B -> C[Trade performance Output: Server Logs(Live) & Module Output(BT) ]
-```
--->
-
-- Freqtrade with Quant modules App Cycle
-    
-    A[OHCLV Data] --> B[Freqtrade modules mutate OHLCV as df: Inject module objs that Computes Quant data into df]
-    B --> C[Trade performance Output from final df ]
-
-- Hack Process Exection of Freqtrade & Lumibot strategy bot
-
-1. Process control of bot For Start, Pause, Stop actions. Python (main), Bash, Docker & K8 can provide process handling
-    - Control via Freqtrade RPC module
-2. Mod Freqtrade modules
-    - For required, quant control code over startup server & running RPC client.
-    - Default timed RPC client that monitors of our Porfolio: Wallet, Order-Assets & Returns etc... to be used in Quant Strats. 
-    - High Precision(Higher Big O) quote price to tradebot actions values: Above 2 func space calc runtime should inject our Quant strats 
-    
-    **BT: **
-    - Strategy handles both High Precision & tradebot actions
-    - Apply Quant Strats for each time-delta row of a timeframe using backtest() in backtest.py.
-    
-    **LIVE:** 
-    - from freqtradebot.py find func space that will monitor every time-delta of a quote stock upto highlighting the tradebot postion actions 
-    - update_trade_state() for tradebot actions: Checks trades with open orders and updates the amount if necessary. Handles closing both buy and sell orders.
-
-3. New exchanges class added to Freqtrade or Lumibot. This for other types of stock data.
-    1. Lumibot for live & Freqtrade for Backtest? Lumibot has easier broker configuration than the freqtrade class code 
-
-## Quant Engine Technical Strategy Features
-
-> Tradebot strats table 
-
-> Quant Technical Strats Table
-
-- Main goal: **Monitor & Maximize Returns**
-
-Monitor: Server Logs(Live) w/ Lumibot-like Portofolio returns & Module Output(BT)
-Maximize: Quant + Technical Strat signals, AI Strat predictions
-
-| NO. | Quant Strategy               | Input Parameters         | Formula or Concept                                             |
-| --- | ---------------------------- | ------------------------ | -------------------------------------------------------------- |
-| 1   | Value at Risk (VaR)           | Returns                  | VaR α = Quantile α (Portfolio Returns)                         |
-| 2   | Expected Shortfall (ES)       | Loss                     | ES α = E[Loss ∣ Loss > VaR α]                                  |
-| 3   | Maximum Drawdown (MDD)        | Peak & Trough Value      | MDD = (Peak Value − Trough Value) / Peak Value                 |
-| 4   | Fama-French Model             | Size, Value, Market      | R_p - R_f = α + β1(R_m - R_f) + β2(SMB) + β3(HML) + ε          |
-| 5   | Factor Tilt                   | Factor Scores            | Adjust portfolio weightings toward desired factors (e.g., Value, Momentum) |
-| 6   | GARCH Model                   | Returns, Volatility      | σ²_t = α_0 + α_1 ε²_(t-1) + β_1 σ²_(t-1)                      |
-| 7   | Correlation Analysis          | Asset Returns            | Correlation = Cov(r_x, r_y) / (σ_x * σ_y)                      |
-| 8   | Volatility Analysis           | Asset Returns            | Volatility = Standard Deviation of Returns, σ = sqrt(Var(r))    |
-| 9   | Mean-Variance Optimization (MVO) | Returns, Risk, Covariance | Minimize portfolio variance: σ²_p = Σ Σ w_i w_j Cov(r_i, r_j) |
-| 10  | Black-Litterman Model         | Market Equilibrium, Investor Views | Combines market-implied returns with investor views for optimal asset allocation |
-| 11  | Risk Parity                   | Asset Weights, Volatility | Allocate based on equal risk contribution from each asset       |
-| 12  | Sharpe Ratio                  | Returns, Risk-Free Rate, Volatility | Sharpe Ratio = (R_p - R_f) / σ_p                       |
-| 13  | Sortino Ratio                 | Returns, Risk-Free Rate, Downside Deviation | Sortino Ratio = (R_p - R_f) / σ_d                   |
-| 14  | Black-Scholes Model           | Stock Price, Strike Price, Volatility, Time to Maturity | Black-Scholes PDE: ∂V/∂t + 0.5σ²S² ∂²V/∂S² + rS∂V/∂S - rV = 0 |
-| 15  | Delta Hedging                 | Option Price Sensitivity | Δ = ∂V/∂S, Adjusting asset holdings to neutralize option risk  |
-
-> Quant Strats time-delta ranges
-
-- Main goal: **Calibrate & Optimize Time-Delta Range**
-
-Here’s a high-efficiency, industry-standard table disclosing the time-delta ranges used for various Quant Strategies. 
-These time-delta ranges are selected based on best practices in quantitative finance, ensuring accurate and reliable performance evaluations for each strategy.
-
-| NO. | Quant Strategy            | Time-Delta Range                        | Reasoning and Usage                                              |
-| --- | ------------------------- | --------------------------------------- | ---------------------------------------------------------------- |
-| 1   | Value at Risk (VaR)        | 1 day to 1 month                        | Typically computed for short-term horizons to measure potential daily/weekly losses in portfolios. |
-| 2   | Expected Shortfall (ES)    | 1 day to 1 month                        | Used in tandem with VaR to assess tail risk for short-term extreme losses. |
-| 3   | Volatility Analysis        | 1 day to 6 months                       | Typically applied to shorter time frames to capture recent volatility patterns, often in daily or monthly intervals. |
-| 4   | GARCH Model                | 1 day to 6 months                       | GARCH is generally applied to short-term volatility modeling, but historical data is necessary for reliable parameter estimation. |
-| 5   | Correlation Analysis       | 1 month to 5 years                      | Correlation matrices are often computed over a variety of periods; short-term for tactical adjustments, and long-term for strategic asset allocation. |
-| 6   | Maximum Drawdown (MDD)     | 1 month to 1 year                       | MDD is usually observed over medium to long-term periods to capture significant downturns. |
-| 7   | Factor Tilt                | 6 months to 5 years                     | Factor premiums like **Value** or **Momentum** require medium to long-term horizons to manifest reliably. |
-| 8   | Mean-Variance Optimization | 1 year to 3 years                       | For optimal portfolio weights, MVO relies on historical returns and covariances, often calculated over medium to long-term horizons. |
-| 9   | Fama-French Model          | 1 year to 5 years                       | Factors like **Size** and **Value** typically require long-term historical data for robust analysis. |
-
-- Freqtrade offers the available dataframe to derive calcs for Quant Strats. Below object describes it.
-
-## Quant Engineer backtest plan for Portfolio Strategy Approval
+The Big 6 modules facilitating the core aspect of SnowFreq Portfolio Investing ie. Quant Analsis for Trade signals & Final report
 
 ### 1. **Overview of the Portfolio Strategy**
 
@@ -230,18 +137,66 @@ The portfolio is regularly stress-tested against macroeconomic shocks, such as i
 ### Conclusion:
 This data-driven, multi-factor, and risk-managed approach ensures the portfolio is optimized to maximize risk-adjusted returns while protecting against significant downside risks. The strategy's success lies in its combination of **quantitative rigor**, **factor-based stock selection**, and **robust risk management**, allowing it to consistently outperform while maintaining stability.
 
+### Example of Quant Strats (ChatGPT articles)
 
-```data.py
-Index(['pair', 'stake_amount', 'max_stake_amount', 'amount', 'open_date',
-       'close_date', 'open_rate', 'close_rate', 'fee_open', 'fee_close',
-       'trade_duration', 'profit_ratio', 'profit_abs', 'exit_reason',
-       'initial_stop_loss_abs', 'initial_stop_loss_ratio', 'stop_loss_abs',
-       'stop_loss_ratio', 'min_rate', 'max_rate', 'is_open', 'enter_tag',
-       'leverage', 'is_short', 'open_timestamp', 'close_timestamp', 'orders'],
-      dtype='object')
-```
+> Quant Technical Strats Table 
 
-## Quant Engine SDLC
+- Main goal: **Monitor & Maximize Returns**
+
+Monitor: Server Logs(Live) w/ Lumibot-like Portofolio returns & Module Output(BT)
+Maximize: Quant + Technical Strat signals, AI Strat predictions
+
+| NO. | Quant Strategy               | Input Parameters         | Formula or Concept                                             |
+| --- | ---------------------------- | ------------------------ | -------------------------------------------------------------- |
+| 1   | Value at Risk (VaR)           | Returns                  | VaR α = Quantile α (Portfolio Returns)                         |
+| 2   | Expected Shortfall (ES)       | Loss                     | ES α = E[Loss ∣ Loss > VaR α]                                  |
+| 3   | Maximum Drawdown (MDD)        | Peak & Trough Value      | MDD = (Peak Value − Trough Value) / Peak Value                 |
+| 4   | Fama-French Model             | Size, Value, Market      | R_p - R_f = α + β1(R_m - R_f) + β2(SMB) + β3(HML) + ε          |
+| 5   | Factor Tilt                   | Factor Scores            | Adjust portfolio weightings toward desired factors (e.g., Value, Momentum) |
+| 6   | GARCH Model                   | Returns, Volatility      | σ²_t = α_0 + α_1 ε²_(t-1) + β_1 σ²_(t-1)                      |
+| 7   | Correlation Analysis          | Asset Returns            | Correlation = Cov(r_x, r_y) / (σ_x * σ_y)                      |
+| 8   | Volatility Analysis           | Asset Returns            | Volatility = Standard Deviation of Returns, σ = sqrt(Var(r))    |
+| 9   | Mean-Variance Optimization (MVO) | Returns, Risk, Covariance | Minimize portfolio variance: σ²_p = Σ Σ w_i w_j Cov(r_i, r_j) |
+| 10  | Black-Litterman Model         | Market Equilibrium, Investor Views | Combines market-implied returns with investor views for optimal asset allocation |
+| 11  | Risk Parity                   | Asset Weights, Volatility | Allocate based on equal risk contribution from each asset       |
+| 12  | Sharpe Ratio                  | Returns, Risk-Free Rate, Volatility | Sharpe Ratio = (R_p - R_f) / σ_p                       |
+| 13  | Sortino Ratio                 | Returns, Risk-Free Rate, Downside Deviation | Sortino Ratio = (R_p - R_f) / σ_d                   |
+| 14  | Black-Scholes Model           | Stock Price, Strike Price, Volatility, Time to Maturity | Black-Scholes PDE: ∂V/∂t + 0.5σ²S² ∂²V/∂S² + rS∂V/∂S - rV = 0 |
+| 15  | Delta Hedging                 | Option Price Sensitivity | Δ = ∂V/∂S, Adjusting asset holdings to neutralize option risk  |
+
+> Quant Strats time-delta ranges
+
+- Main goal: **Calibrate & Optimize Time-Delta Range**
+
+Here’s a high-efficiency, industry-standard table disclosing the time-delta ranges used for various Quant Strategies. 
+These time-delta ranges are selected based on best practices in quantitative finance, ensuring accurate and reliable performance evaluations for each strategy.
+
+| NO. | Quant Strategy            | Time-Delta Range                        | Reasoning and Usage                                              |
+| --- | ------------------------- | --------------------------------------- | ---------------------------------------------------------------- |
+| 1   | Value at Risk (VaR)        | 1 day to 1 month                        | Typically computed for short-term horizons to measure potential daily/weekly losses in portfolios. |
+| 2   | Expected Shortfall (ES)    | 1 day to 1 month                        | Used in tandem with VaR to assess tail risk for short-term extreme losses. |
+| 3   | Volatility Analysis        | 1 day to 6 months                       | Typically applied to shorter time frames to capture recent volatility patterns, often in daily or monthly intervals. |
+| 4   | GARCH Model                | 1 day to 6 months                       | GARCH is generally applied to short-term volatility modeling, but historical data is necessary for reliable parameter estimation. |
+| 5   | Correlation Analysis       | 1 month to 5 years                      | Correlation matrices are often computed over a variety of periods; short-term for tactical adjustments, and long-term for strategic asset allocation. |
+| 6   | Maximum Drawdown (MDD)     | 1 month to 1 year                       | MDD is usually observed over medium to long-term periods to capture significant downturns. |
+| 7   | Factor Tilt                | 6 months to 5 years                     | Factor premiums like **Value** or **Momentum** require medium to long-term horizons to manifest reliably. |
+| 8   | Mean-Variance Optimization | 1 year to 3 years                       | For optimal portfolio weights, MVO relies on historical returns and covariances, often calculated over medium to long-term horizons. |
+| 9   | Fama-French Model          | 1 year to 5 years                       | Factors like **Size** and **Value** typically require long-term historical data for robust analysis. |
+
+- Freqtrade offers the available dataframe to derive calcs for Quant Strats. Below object describes it.
+
+### Q/A of Quant Analysis
+
+> What Is the Difference Between Alpha and Beta in Finance?
+
+Alpha measures how much an investment outperforms or underperforms a benchmark. Beta is a measurement of an investment’s volatility and is one measurement of an investment’s risk.
+
+
+## Portfolio Investing (Investopedia + DataCamp articles)
+
+### What Is a Financial Portfolio? (Investopedia articles)
+
+## SnowFreq App SDLC (Overall Project App)
 
 ### 1. Bkg. Information 
 
@@ -456,7 +411,7 @@ This testing framework ensures that each component of your Quant Strat app is ri
 
 ### 6. Maintenance
 
-
+## SnowFreq Final Statistical analysis & Report briefing
 
 # Results
 
