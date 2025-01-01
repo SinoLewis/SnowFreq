@@ -5,8 +5,17 @@ Development procedures to achieve SnowFreq Quant modules.
 1. Options Trading
 2. Portfolio Optimizers
 3. Risk Metrics
+4. Quant Plots
+
+There after we inject modules into SnowFreq freqtrade package.
 
 ## 1. Options Trading
+
+[FMNM](https://github.com/cantaro86/Financial-Models-Numerical-Methods) provides use with the Black-Scholes equation with various types:
+
+1. American Options
+2. European Options
+3. Asian Options
 
 ## 2. Portfolio Optimizers
 
@@ -54,3 +63,15 @@ However, convex optimization problems are a well-understood class of problems, w
 - Hierachal Risk parity
 
 ## 3. Risk Metrics
+
+1. Correlation & Volatility (from FMNM repo)
+2. [QuantStats](https://github.com/ranaroussi/quantstats) contain various industry standards risk metrics
+
+> NB
+
+a correlation is essentially a normalized form of covariance, meaning it is the covariance between two variables divided by the product of their standard deviations
+
+## 4. Quant Plots
+
+For the new Quant modules, some methods may provide addition Plotting data inform of charts.
+This is plots will be generated in respective of the modules
