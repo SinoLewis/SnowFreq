@@ -1,14 +1,15 @@
 {
+    "$schema": "https://schema.freqtrade.io/schema.json",
     "max_open_trades": 5,
     "stake_currency": "USDT",
-    "stake_amount": 420,
+    "stake_amount": 100,
     "tradable_balance_ratio": 0.99,
     "fiat_display_currency": "USD",
     "dry_run": true,
     "dry_run_wallet": 1000,
     "cancel_open_orders_on_exit": false,
     "trading_mode": "spot",
-    "margin_mode": "",
+    "margin_mode": "isolated",
     "unfilledtimeout": {
         "entry": 10,
         "exit": 10,
@@ -65,16 +66,16 @@
         "chat_id": ""
     },
     "api_server": {
-        "enabled": false,
-        "listen_ip_address": "127.0.0.1",
+        "enabled": true,
+        "listen_ip_address": "0.0.0.0",
         "listen_port": 8080,
         "verbosity": "error",
-        "enable_openapi": false,
-        "jwt_secret_key": "0300918eefce3ab0f0857e38e19654b73c3c15e1dd4e30ad3ee5af9f17fd0c46",
-        "ws_token": "IVaJXq2rjxE2mix7OjggIpF0JL5EmwkjPQ",
+        "enable_openapi": true,
+        "jwt_secret_key": "c817afb130126c9f03ef14494e8926827d3d0388599bd11021a4f0b960fd029b",
+        "ws_token": "OmPplCE11c0PmChqlc1ghDhexwc8PG0Hug",
         "CORS_origins": [],
-        "username": "",
-        "password": ""
+        "username": "BobbyAxe",
+        "password": "420"
     },
     "bot_name": "freqtrade",
     "initial_state": "running",
