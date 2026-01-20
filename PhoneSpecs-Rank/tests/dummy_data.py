@@ -1,0 +1,61 @@
+# tests/dummy_data.py
+
+DUMMY_PHONES = [
+    {
+        "brand": "Google",
+        "model": "Pixel 8 Pro",
+        "cpu_score": 125,
+        "gpu_score": 110,
+        "ram_gb": 12,
+        "storage_type": "UFS 3.1",
+        "display_type": "OLED",
+        "refresh_rate": 120,
+        "resolution_ppi": 512,
+        "main_camera_mp": 50,
+        "ois": True,
+        "video_4k": True,
+        "battery_mah": 5050,
+        "charging_watt": 30,
+        "build_material": "Glass",
+        "os_update_years": 7,
+        "price_usd": 999
+    },
+    {
+        "brand": "Samsung",
+        "model": "Galaxy A55",
+        "cpu_score": 95,
+        "gpu_score": 85,
+        "ram_gb": 8,
+        "storage_type": "UFS 2.2",
+        "display_type": "AMOLED",
+        "refresh_rate": 120,
+        "resolution_ppi": 405,
+        "main_camera_mp": 50,
+        "ois": False,
+        "video_4k": True,
+        "battery_mah": 5000,
+        "charging_watt": 25,
+        "build_material": "Plastic",
+        "os_update_years": 4,
+        "price_usd": 399
+    },
+    {
+        "brand": "Xiaomi",
+        "model": "Redmi Note 13",
+        "cpu_score": 88,
+        "gpu_score": 80,
+        "ram_gb": 6,
+        "storage_type": "UFS 2.2",
+        "display_type": "IPS LCD",
+        "refresh_rate": 90,
+        "resolution_ppi": 395,
+        "main_camera_mp": 108,
+        "ois": False,
+        "video_4k": False,
+        "battery_mah": 5000,
+        "charging_watt": 33,
+        "build_material": "Plastic",
+        "os_update_years": 3,
+        "price_usd": 249
+    }
+]
